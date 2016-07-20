@@ -32,7 +32,6 @@ use frontend\models\Profile;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
-    const STATUS_ACTIVE = 1;
 
 
     /**
@@ -86,7 +85,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            ['status_id', 'default', 'value' => self::STATUS_ACTIVE],
+            ['status_id', 'default', 'value' => ValueHelpers::getStatusId('Active')],
             [['status_id'],'in','range'=>array_keys($this->getStatusList())],
             ['role_id','default','value'=>1],
             [['role_id'],'in', 'range'=>array_keys($this->getRoleList())],
@@ -110,7 +109,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return static::findOne(['id' => $id, 'status_id' => self::STATUS_ACTIVE]);
+        return static::findOne(['id' => $id, 'status_id' => ValueHelpers::getStatusId('Active')]);
     }
 
     /**
@@ -129,7 +128,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findByUsername($username)
     {
-        return static::findOne(['username' => $username, 'status_id' => self::STATUS_ACTIVE]);
+        return static::findOne(['username' => $username, 'status_id' => ValueHelpers::getStatusId('Active')]);
     }
 
     /**
@@ -146,7 +145,7 @@ class User extends ActiveRecord implements IdentityInterface
 
         return static::findOne([
             'password_reset_token' => $token,
-            'status_id' => self::STATUS_ACTIVE,
+            'status_id' => ValueHelpers::getStatusId('Active'),
         ]);
     }
 

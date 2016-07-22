@@ -35,6 +35,17 @@ class Profile extends \yii\db\ActiveRecord
     }
 
 
+    public function beforeValidate()
+    {
+        if($this->birthday !=null){
+
+            $new_date_format = date("Y-m-d",strtotime($this->birthday));
+            $this->birthday =$new_date_format;
+        }
+
+        return parent::beforeValidate();
+    }
+
     public function behaviors()
     {
         return [
@@ -59,7 +70,7 @@ class Profile extends \yii\db\ActiveRecord
             [['user_id', 'gender_id'], 'integer'],
             [['birthday', 'created_at', 'updated_at'], 'safe'],
             [['first_name', 'last_name'], 'string', 'max' => 60],
-            [['birthday'], 'date', 'format'=>'Y-m-d'],
+            [['birthday'], 'date', 'format'=>'php:Y-m-d'],
             [['birthday', 'created_at', 'updated_at'], 'safe'],
             [['gender_id'],'in', 'range'=>array_keys($this->getGenderList())],
             [['gender_id'], 'exist', 'skipOnError' => true, 'targetClass' => Gender::className(), 'targetAttribute' => ['gender_id' => 'id']],

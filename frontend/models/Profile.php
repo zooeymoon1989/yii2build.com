@@ -88,7 +88,7 @@ class Profile extends \yii\db\ActiveRecord
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
             'birthday' => 'Birthday',
-            'gender_id' => 'Gender ID',
+            'gender_id' => 'Gender',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'genderName' => Yii::t('app', 'Gender'),

@@ -67,6 +67,7 @@ class LoginForm extends Model
 
 
     public function loginAdmin(){
+
         if($this->validate() && PermissionHelpers::requireMinimumRole('Admin',$this->getUser()->id)){
             return Yii::$app->user->login($this->getUser(),$this->rememberMe?36000*24*30:0);
         }else{

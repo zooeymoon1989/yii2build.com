@@ -37,7 +37,7 @@ class ValueHelpers
 
         if($userId ==null){//如果用户id没有被设置
 
-            $usersRoleValue = Yii::$app->user->identity->role->role_name;//Yii应用中是否存在角色名
+            $usersRoleValue = Yii::$app->user->identity->role->role_value;
 
             return isset($usersRoleValue)?$usersRoleValue:false;
         }else{//如果有用户ID

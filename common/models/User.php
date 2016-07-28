@@ -87,10 +87,13 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['status_id', 'default', 'value' => ValueHelpers::getStatusId('Active')],
             [['status_id'],'in','range'=>array_keys($this->getStatusList())],
+            ['status_id','required'],
             ['role_id','default','value'=>1],
             [['role_id'],'in', 'range'=>array_keys($this->getRoleList())],
+            ['role_id','required'],
             ['user_type_id','default','value'=>1],
             [['user_type_id'],'in', 'range'=>array_keys($this->getUserTypeList())],
+            ['user_type_id','required'],
             ['username','filter','filter'=>'trim'],
             ['username','required'],
             ['username','unique'],
@@ -290,9 +293,9 @@ class User extends ActiveRecord implements IdentityInterface
 
     
     public function getProfileLink(){
-        $url = Url::to(['profile/update',['id'=>$this->profileId]]);
+        $url = Url::to(['profile/view','id'=>$this->profileId]);
         $options = [];
-        return Html::a($this->profile?'profile':'none',$url,$options);
+        return Html::a($this->profile?$this->username."'s Profile":'None Profile',$url,$options);
     }
 
     public function getUserIdLink(){

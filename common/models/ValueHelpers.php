@@ -75,7 +75,7 @@ class ValueHelpers
      * @return bool
      */
     public static function statusMatch($status_name){
-        $userHasStatusName = Yii::$app->user->status->status_name;
+        $userHasStatusName = Yii::$app->user->identity->status->status_name;
 
         return $userHasStatusName ==$status_name ?true:false;
     }

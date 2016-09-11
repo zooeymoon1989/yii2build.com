@@ -2,18 +2,18 @@
 
 namespace backend\controllers;
 
+use common\models\PermissionHelpers;
 use Yii;
-use backend\models\Status;
-use backend\models\search\StatusSearch;
+use backend\models\Faq;
+use backend\models\search\FaqSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use common\models\PermissionHelpers;
 
 /**
- * StatusController implements the CRUD actions for Status model.
+ * FaqController implements the CRUD actions for Faq model.
  */
-class StatusController extends Controller
+class FaqController extends Controller
 {
     /**
      * @inheritdoc
@@ -23,25 +23,16 @@ class StatusController extends Controller
         return [
             'access'=>[
                 'class'=>\yii\filters\AccessControl::className(),
-                'only'=>['index','view','create','update','delete'],
+                'only'=>['index','view','update','create','delete'],
                 'rules'=>[
                     [
-                        'actions'=>['index','create','view'],
+                        'actions'=>['index','view','update','create','delete'],
                         'allow'=>true,
                         'roles'=>['@'],
                         'matchCallback'=>function($rule,$action){
                             return PermissionHelpers::requireMinimumRole('Admin') && PermissionHelpers::requireStatus('Active');
                         }
-                    ],
-                    [
-                        'actions' => [ 'update', 'delete'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                        'matchCallback' => function ($rule, $action) {
-                            return PermissionHelpers::requireMinimumRole('SuperUser')
-                            && PermissionHelpers::requireStatus('Active');
-                        }
-                    ],
+                    ]
                 ]
             ],
             'verbs' => [
@@ -54,12 +45,12 @@ class StatusController extends Controller
     }
 
     /**
-     * Lists all Status models.
+     * Lists all Faq models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new StatusSearch();
+        $searchModel = new FaqSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -69,7 +60,7 @@ class StatusController extends Controller
     }
 
     /**
-     * Displays a single Status model.
+     * Displays a single Faq model.
      * @param integer $id
      * @return mixed
      */
@@ -81,13 +72,13 @@ class StatusController extends Controller
     }
 
     /**
-     * Creates a new Status model.
+     * Creates a new Faq model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Status();
+        $model = new Faq();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -99,7 +90,7 @@ class StatusController extends Controller
     }
 
     /**
-     * Updates an existing Status model.
+     * Updates an existing Faq model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -118,7 +109,7 @@ class StatusController extends Controller
     }
 
     /**
-     * Deletes an existing Status model.
+     * Deletes an existing Faq model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -131,15 +122,15 @@ class StatusController extends Controller
     }
 
     /**
-     * Finds the Status model based on its primary key value.
+     * Finds the Faq model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Status the loaded model
+     * @return Faq the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Status::findOne($id)) !== null) {
+        if (($model = Faq::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

@@ -23,13 +23,15 @@ class ProfileController extends Controller
         return [
             //定义只有登录的用户才能访问这些action
             'access'=>[
-                'class'=>\yii\filters\AccessControl::className(),
-                'only'=>['index','view','create','update','delete'],
-                'allow'=>true,
-                'roles'=>['@'],
-                'matchCallback'=>function($rule,$action){
-                    return PermissionHelpers::requireStatus('Active');
-                }
+                [
+                    'class'=>\yii\filters\AccessControl::className(),
+                    'only'=>['index','view','create','update','delete'],
+                    'allow'=>true,
+                    'roles'=>['@'],
+                    'matchCallback'=>function($rule,$action){
+                        return PermissionHelpers::requireStatus('Active');
+                    }
+                ]
             ],
             'verbs' => [
                 'class' => VerbFilter::className(),

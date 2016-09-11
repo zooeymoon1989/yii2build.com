@@ -34,5 +34,8 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'mycomponent'=>[
+            'class'=>'components\MyComponent',
+        ],
     ],
 ];

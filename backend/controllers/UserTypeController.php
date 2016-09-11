@@ -25,22 +25,24 @@ class UserTypeController extends Controller
                 'class'=>\yii\filters\AccessControl::className(),
                 'only'=>['index','view','create','update','delete'],
                 'rules'=>[
-                    'actions'=>['index','create','view'],
-                    'allow'=>true,
-                    'roles'=>['@'],
-                    'matchCallback'=>function($rule,$action){
-                        return PermissionHelpers::requireMinimumRole('Admin') && PermissionHelpers::requireStatus('Active');
-                    }
-                ],
-                [
-                    'actions' => [ 'update', 'delete'],
-                    'allow' => true,
-                    'roles' => ['@'],
-                    'matchCallback' => function ($rule, $action) {
-                        return PermissionHelpers::requireMinimumRole('SuperUser')
-                        && PermissionHelpers::requireStatus('Active');
-                    }
-                ],
+                    [
+                        'actions'=>['index','create','view'],
+                        'allow'=>true,
+                        'roles'=>['@'],
+                        'matchCallback'=>function($rule,$action){
+                            return PermissionHelpers::requireMinimumRole('Admin') && PermissionHelpers::requireStatus('Active');
+                        }
+                    ],
+                    [
+                        'actions' => [ 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function ($rule, $action) {
+                            return PermissionHelpers::requireMinimumRole('SuperUser')
+                            && PermissionHelpers::requireStatus('Active');
+                        }
+                    ],
+                ]
             ],
             'verbs' => [
                 'class' => VerbFilter::className(),

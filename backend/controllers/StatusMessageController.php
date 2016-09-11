@@ -3,17 +3,17 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\Status;
-use backend\models\search\StatusSearch;
+use backend\models\StatusMessage;
+use backend\models\search\StatusMessageSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\PermissionHelpers;
 
 /**
- * StatusController implements the CRUD actions for Status model.
+ * StatusMessageController implements the CRUD actions for StatusMessage model.
  */
-class StatusController extends Controller
+class StatusMessageController extends Controller
 {
     /**
      * @inheritdoc
@@ -26,7 +26,7 @@ class StatusController extends Controller
                 'only'=>['index','view','create','update','delete'],
                 'rules'=>[
                     [
-                        'actions'=>['index','create','view'],
+                        'actions'=>['index','create','update','view'],
                         'allow'=>true,
                         'roles'=>['@'],
                         'matchCallback'=>function($rule,$action){
@@ -34,7 +34,7 @@ class StatusController extends Controller
                         }
                     ],
                     [
-                        'actions' => [ 'update', 'delete'],
+                        'actions' => [ 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
                         'matchCallback' => function ($rule, $action) {
@@ -54,12 +54,12 @@ class StatusController extends Controller
     }
 
     /**
-     * Lists all Status models.
+     * Lists all StatusMessage models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new StatusSearch();
+        $searchModel = new StatusMessageSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -69,7 +69,7 @@ class StatusController extends Controller
     }
 
     /**
-     * Displays a single Status model.
+     * Displays a single StatusMessage model.
      * @param integer $id
      * @return mixed
      */
@@ -81,13 +81,13 @@ class StatusController extends Controller
     }
 
     /**
-     * Creates a new Status model.
+     * Creates a new StatusMessage model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Status();
+        $model = new StatusMessage();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -99,7 +99,7 @@ class StatusController extends Controller
     }
 
     /**
-     * Updates an existing Status model.
+     * Updates an existing StatusMessage model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -118,7 +118,7 @@ class StatusController extends Controller
     }
 
     /**
-     * Deletes an existing Status model.
+     * Deletes an existing StatusMessage model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -131,15 +131,15 @@ class StatusController extends Controller
     }
 
     /**
-     * Finds the Status model based on its primary key value.
+     * Finds the StatusMessage model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Status the loaded model
+     * @return StatusMessage the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Status::findOne($id)) !== null) {
+        if (($model = StatusMessage::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

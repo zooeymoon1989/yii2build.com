@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\Faq;
 use yii\data\ArrayDataProvider;
+use yii\data\SqlDataProvider;
 use yii\db\Query;
 
 /**
@@ -167,5 +168,31 @@ class FaqSearch extends Faq
         ]);
 
         return $provider;
+    }
+
+    public function featuredProvider()
+    {
+
+        $count = Yii::$app->db->createCommand('
+            SELECT COUNT(*) FROM `faq` WHERE `faq_is_featured` = :faq_is_featured
+        ',[':faq_is_featured'=>1])->queryScalar();
+
+        $featuredProvider = new SqlDataProvider([
+            'sql'=>'SELECT * FROM `faq` WHERE `faq_is_featured` = :faq_is_featured ORDER BY `faq_weight` ASC',
+            'params'=>[':faq_is_featured'=>1],
+            'totalCount'=>$count,
+            'sort'=>[
+                'attributes'=>[
+                    'id',
+                    'faq_question'
+                ]
+            ],
+            'pagination'=>[
+                'pageSize'=>10
+            ]
+        ]);
+
+        return $featuredProvider;
+
     }
 }

@@ -5,6 +5,7 @@ use kartik\social\FacebookPlugin;
 use \yii\bootstrap\Collapse;
 use \yii\bootstrap\Alert;
 use \yii\bootstrap\Html;
+use components\FaqWidget;
 
 /* @var $this yii\web\View */
 
@@ -146,4 +147,12 @@ $this->title = 'Yii 2 Build';
             </div>
         </div>
     </div>
+
+    <?= FaqWidget::widget([
+        'settings'=>[
+            'pageSize'=>3,
+            'featuredOnly'=>true
+        ]
+    ]) ?>
+
 </div>

@@ -16,20 +16,14 @@ use yii\widgets\LinkPager;
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">
-                <?php
-                if($settings['featuredOnly'] == true){
-                    echo 'Featured Questions';
-                }else{
-                    echo 'FAQs';
-                }
-                ?>
+                <?= $settings['heading'];?>
             </h3>
         </div>
 
 
         <?php
             foreach ($models as $model){
-                $url = Url::to(['faq/view','id'=>$model->id]);
+                $url = Url::toRoute('faq/'.$model->id.'/'.$model->slug);
                 $options = [];
                 echo '<div class="panel-body">'.Html::a($model->faq_question,$url,$options).'</div>';
             }

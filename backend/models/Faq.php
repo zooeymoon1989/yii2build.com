@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use yii\behaviors\SluggableBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 use backend\models\FaqCategory;
@@ -18,6 +19,7 @@ use common\models\User;
  *
  * @property integer $id
  * @property string $faq_question
+ * @property string $slug
  * @property string $faq_answer
  * @property integer $faq_category_id
  * @property integer $faq_is_featured
@@ -53,6 +55,16 @@ class Faq extends \yii\db\ActiveRecord
                 'class'=>BlameableBehavior::className(),
                 'createdByAttribute'=>'created_by',
                 'updatedByAttribute'=>'updated_by'
+            ],
+            'sluggable'=>[
+                'class'=>SluggableBehavior::className(),
+//                'attribute'=>'faq_question',
+                // In case of attribute that contains slug has different name
+                // 'slugAttribute' => 'alias',
+                'value' => function ($event) {
+                $question = rtrim($this->faq_question, '?' );
+                    return str_replace(' ', '_', $question);
+                }
             ]
         ];
     }

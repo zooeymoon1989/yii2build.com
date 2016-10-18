@@ -151,7 +151,8 @@ $this->title = 'Yii 2 Build';
     <?= FaqWidget::widget([
         'settings'=>[
             'pageSize'=>3,
-            'featuredOnly'=>true
+            'featuredOnly'=>true,
+            'heading' => 'Featured FAQs'
         ]
     ]) ?>
 

@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
+use components\FaqWidget;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -16,25 +17,15 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <br>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">
-                Questions
-            </h3>
-        </div>
-
-        <?php
-        $data = $provider->getModels();//返回数据模型
-        $questions = ArrayHelper::map($data,'faq_question','id');
-
-        foreach($questions as $question =>$id){
-            $url = Url::to(['faq/view','id'=>$id]);
-            $options = [];
-            echo "<div class='panel-body'>".Html::a($question,$url,$options).'</div>';
-        }
-        ?>
-
-    </div>
+    <?=
+        FaqWidget::widget([
+            'settings'=>[
+                'pageSize'=>10,
+                'featuredOnly'=>false,
+                'heading' => 'Featured FAQs'
+            ]
+        ]);
+    ?>
 
 
 </div>

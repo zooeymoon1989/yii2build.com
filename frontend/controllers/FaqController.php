@@ -35,25 +35,35 @@ class FaqController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new FaqSearch();
-        $provider = $searchModel->frontendProvider();
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'provider' => $provider,
-        ]);
+//        $searchModel = new FaqSearch();
+//        $provider = $searchModel->frontendProvider();
+//
+//        return $this->render('index', [
+//            'searchModel' => $searchModel,
+//            'provider' => $provider,
+//        ]);
+        return $this->render('index');
     }
 
     /**
-     * Displays a single Faq model.
-     * @param integer $id
-     * @return mixed
+     * @param $id
+     * @param null $slug
+     * @return string
+     * @throws NotFoundHttpException
      */
-    public function actionView($id)
+    public function actionView($id,$slug =null)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+
+        $model = $this->findModel($id);
+
+        if($slug == $model->slug){
+            return $this->render('view',[
+                'model'=>$model,
+                'slug'=>$model->slug
+            ]);
+        }else{
+            throw new NotFoundHttpException('The requested Faq does not exist.');
+        }
     }
 
 

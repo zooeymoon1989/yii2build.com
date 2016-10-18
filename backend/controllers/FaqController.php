@@ -6,6 +6,7 @@ use common\models\PermissionHelpers;
 use Yii;
 use backend\models\Faq;
 use backend\models\search\FaqSearch;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -60,15 +61,24 @@ class FaqController extends Controller
     }
 
     /**
-     * Displays a single Faq model.
-     * @param integer $id
-     * @return mixed
+     * @param $id
+     * @param null $slug
+     * @return string
+     * @throws NotFoundHttpException
      */
-    public function actionView($id)
+    public function actionView($id,$slug =null)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+
+        $model = $this->findModel($id);
+
+        if($slug == $model->slug){
+            return $this->render('view',[
+                'model'=>$model,
+                'slug'=>$model->slug
+            ]);
+        }else{
+            throw new NotFoundHttpException('The requested Faq does not exist.');
+        }
     }
 
     /**
@@ -81,7 +91,10 @@ class FaqController extends Controller
         $model = new Faq();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+
+            $url = Url::toRoute('faq/'.$model->id.'/'.$model->slug);
+
+            return $this->redirect($url);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -100,7 +113,10 @@ class FaqController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            
+            $url = Url::toRoute('faq/'.$model->id.'/'.$model->slug);
+
+            return $this->redirect($url);
         } else {
             return $this->render('update', [
                 'model' => $model,

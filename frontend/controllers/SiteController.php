@@ -2,6 +2,8 @@
 namespace frontend\controllers;
 
 
+use common\models\Auth;
+use common\models\User;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -20,6 +22,14 @@ use common\models\MailCall;
  */
 class SiteController extends Controller
 {
+
+    private $attributes = [];
+    private $username;
+    private $source;
+    private $socialUser;
+
+
+
     /**
      * @inheritdoc
      */
@@ -71,6 +81,10 @@ class SiteController extends Controller
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
+            'auth'=>[
+                'class'=>'yii\authclient\AuthAction',
+                'successCallback'=>[$this,'onAuthSuccess']
+            ]
         ];
     }
 
@@ -89,20 +103,30 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionLogin()
+    public function actionLogin($viaSocial = false)
     {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        } else {
-            return $this->render('login', [
-                'model' => $model,
-            ]);
+
+        if($viaSocial){
+
+            Yii::$app->user->login($this->socialUser);
+
+        }else{
+
+            $model = new LoginForm();
+            if ($model->load(Yii::$app->request->post()) && $model->login()) {
+                return $this->goBack();
+            } else {
+                return $this->render('login', [
+                    'model' => $model,
+                ]);
+            }
+
         }
+
     }
 
     /**
@@ -222,4 +246,175 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
+
+
+
+    public function onAuthSuccess($client)
+    {
+
+        $this->attributes = $client->getUserAttributes();//获取回调函数的属性
+
+        $this->source = $client->getId();//获取回调函数的来源
+
+        if ($this->emailPresent()){
+            return Yii::$app->getSession()->setFlash('error', [
+                Yii::t('app', "Unable to finish, {source} did not
+                                provide us with an email. Please check your settings on
+                                {source}.", ['source' => $this->source]),
+            ]);
+        }
+
+        $existingAuth = $this->findExistingAuth();
+
+
+        if(Yii::$app->user->isGuest){
+
+            if($existingAuth){
+
+                $this->socialUser = $existingAuth->user;
+
+                $viaSocial = true;
+
+                $this->actionLogin($viaSocial);
+
+            }else{
+
+                $viaSocial = $this;
+
+                $this->actionSignup($viaSocial);
+
+            }
+
+        }else{ //如果已经登录，执行邮箱匹配
+
+            if(!$existingAuth  &&$this->matchEmail()){
+
+                $auth = $this->createAuth(Yii::$app->user);
+
+                $auth->save();
+
+                Yii::$app->getSession()->setFlash('success', [
+                    Yii::t('app', "Your {source} account is successfully synced.",
+                        ['source' => $this->source]),
+                ]);
+
+            }else{ //邮件不匹配
+
+                if(!$this->matchEmail()){
+
+                    Yii::$app->getSession()->setFlash('error', [
+                        Yii::t('app', "Your {source} account could not be synced.",
+                            ['source' => $this->source]),
+                    ]);
+
+                }else{
+
+                    Yii::$app->getSession()->setFlash('success', [
+                        Yii::t('app', "Your {source} account is already synced.",
+                            ['source' => $this->source]),
+                        ]);
+                    }
+
+                }
+
+            }
+
+    }
+
+
+    private function createUser()
+    {
+        $password = Yii::$app->security->generateRandomString(6);
+        $user = new User([
+            'username'=>$this->attributes[$this->username],
+            'email'=>$this->attributes['email'],
+            'password'=>$password
+        ]);
+
+        $user->generateAuthKey();
+
+        return $user;
+    }
+
+    private function createAuth($user)
+    {
+        $auth = new Auth([
+            'user_id'=>$user->id,
+            'source'=>$this->source,
+            'source_id'=>(string)$this->attributes['id']
+        ]);
+
+        return $auth;
+    }
+
+
+    private function findExistingAuth()
+    {
+        $auth = Auth::find()->where([
+            'source'=>$this->source,
+            'source_id'=>$this->attributes['id']
+        ])->one();
+
+        return $auth;
+    }
+
+
+    private function emailPresent()
+    {
+        return isset($this->attributes['email'])?true:false;
+    }
+
+    private function matchEmail()
+    {
+        return $this->attributes['email']==Yii::$app->user->identity->email?true:false;
+    }
+
+
+    private function formatProviderResponse($source)
+    {
+
+        switch ($source){
+            case $source =='facebook':
+                $this->username = 'name';
+                break;
+            case $source =='github':
+                $this->username = 'login';
+                break;
+            case $source == 'twitter' :
+                $this->username = 'screen_name';
+                break;
+            case $source == 'linkedin' :
+                $this->username = 'fullName';
+
+                $fullName = $this->attributes['first_name'].' '.$this->attributes['last_name'];
+
+                $this->attributes['fullName'] = $fullName;
+                break;
+            case $source == 'google' :
+                $this->username = 'displayName';
+                $emails = $this->attributes['emails'];
+                foreach ($emails as $email){
+                    foreach ($email as $k => $v) {
+                        if ($k == 'value'){
+                            $this->attributes['email'] = $v;
+                        }
+                    }
+                }
+                break;
+
+            default :
+                $this->username = 'name';
+        }
+
+    }
+
+
+    private function emailAlreadyInUse()
+    {
+        return User::find()->where([
+            'email'=>$this->attributes['email']
+        ])->exists()?true:false;
+    }
+
 }
+

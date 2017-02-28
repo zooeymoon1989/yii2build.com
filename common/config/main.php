@@ -31,6 +31,37 @@ return [
         ]
     ],
     'components' => [
+        'authClientCollection' => [
+            'class' => 'yii\authclient\Collection',
+            'clients' => [
+//                'facebook' => [
+//                    'class' => 'yii\authclient\clients\Facebook',
+//                    'clientId' => '1368883696465757',
+//                    'authUrl' => 'https://www.facebook.com/dialog/oauth?display=popup',
+//                    'clientSecret' => '4d282bae19beadea1e801fb306547e90',
+//                ],
+                'github' => [
+                    'class' => 'yii\authclient\clients\GitHub',
+                    'clientId' => '84253cb21276e732547f',
+                    'clientSecret' => 'df589ca7ab301ccab4700a07fff1e935fb9e390d',
+                ],
+//                'twitter' => [
+//                    'class' => 'yii\authclient\clients\Twitter',
+//                    'consumerKey' => 'vpKiLHMdvlGNosVXP4TaDhoXc',
+//                    'consumerSecret' => 'TI6TQcC0UNHU9iiAddH12OJRJrq0ICp37l25yNEqj6bWSYKS7M',
+//                ],
+//                'google' => [
+//                    'class' => 'yii\authclient\clients\GoogleOAuth',
+//                    'clientId' => '108969290916829736875',
+//                    'clientSecret' => '8b5ae9244f0ba2039623480ec95b1290e8adf856',
+//                ],
+//                'linkedin' => [
+//                    'class' => 'yii\authclient\clients\LinkedIn',
+//                    'clientId' => '81qhutg3hzvmty',
+//                    'clientSecret' => '1TZtMxxhPeYX5Kp1',
+//                ],
+            ],
+        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],

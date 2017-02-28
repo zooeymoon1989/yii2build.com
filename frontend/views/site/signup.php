@@ -13,6 +13,17 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="site-signup">
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <?php
+        if(Yii::$app->user->isGuest){
+
+            echo yii\authclient\widgets\AuthChoice::widget([
+                'baseAuthUrl'=>['site/auth'],
+                'popupMode'=>false
+            ]);
+
+    }
+    ?>
+
     <p>Please fill out the following fields to signup:</p>
 
     <div class="row">

@@ -42,6 +42,12 @@ FontAwesomeAsset::register($this);
         ['label' => 'FAQs', 'url' => ['/faq/index']],
         ['label' => 'Contact', 'url' => ['/site/contact']],
     ];
+
+    $menuItems[] = ['label' => 'Social Sync', 'items' => [
+        ['label' => '<i class="fa fa-github"></i> Github',
+            'url' => ['site/auth', 'authclient' => 'github']],
+    ]];
+
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
@@ -59,6 +65,7 @@ FontAwesomeAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => $menuItems,
+        'encodeLabels'=>false
     ]);
     NavBar::end();
     ?>

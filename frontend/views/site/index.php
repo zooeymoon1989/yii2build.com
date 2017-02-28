@@ -9,7 +9,7 @@ use components\FaqWidget;
 
 /* @var $this yii\web\View */
 
-$this->title = 'Yii 2 Build';
+$this->title = 'My Yii Application';
 ?>
 <div class="site-index">
 
@@ -17,20 +17,30 @@ $this->title = 'Yii 2 Build';
 
         <?php
             if(Yii::$app->user->isGuest){
-                echo "<p>";
-                echo Html::a('Get Start Today' ,['site/signup'],['class'=>'btn btn-lg btn-success']);
-                echo "</p>";
+
+                echo yii\authclient\widgets\AuthChoice::widget([
+                    'baseAuthUrl'=>['site/auth'],
+                    'popupMode'=>false
+                ]);
+
             }
         ?>
 
-        <h1>Yii 2 Build<i class="fa fa-plug"></i></h1>
+        <h1>Yii 2 Start<i class="fa fa-plug"></i></h1>
 
-        <p class="lead">Use this Yii 2 Template to start Projects.</p>
-
-        <br>
+        <div
+            class="fb-like"
+            data-share="true"
+            data-width="450"
+            data-show-faces="true">
+        </div>
 
         <?php
-            echo FacebookPlugin::widget(['type'=>FacebookPlugin::LIKE,'settings'=>[]]);
+
+            if(!Yii::$app->user->isGuest){
+                echo '<p class="lead">Use this Yii2 Template to start Projects</p>';
+            }
+
         ?>
     </div>
 

@@ -181,21 +181,78 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionSignup()
+    public function actionSignup($viaSocial = false)
     {
-        $model = new SignupForm();
-        if ($model->load(Yii::$app->request->post())) {
-            if ($user = $model->signup()) {
-                if (Yii::$app->getUser()->login($user)) {
-                    MailCall::onMailableAction('signup',$this->getUniqueId());
-                    return $this->goHome();
+
+        if($viaSocial){
+
+            if($this->emailPresent() && $this->emailAlreadyInUse()){
+
+                return Yii::$app->getSession()->setFlash('error', [
+                    Yii::t('app', "User with the same email as in {source} account already exists but isn't synced. Login with username and password and click the {source} sync link to sync accounts.",
+                        ['source' => $this->source]),
+                ]);
+
+            }else{
+
+                $user = $this->createUser();
+
+                $transaction = $user->getDb->beginTransaction();
+
+                if($user->save()){
+
+                    $auth = $this->createAuth($user);
+
+                    if($auth->save()){
+
+                        $transaction->commit();
+
+                        Yii::$app->user->login($user);
+
+                        MailCall::onMailableAction('signup', 'site');
+
+                    }else{
+
+                        return Yii::$app->getSession()->setFlash('error', [
+                            Yii::t('app', "We were unable to complete the process and sync {source}.", ['source' => $this->source]),
+                        ]);
+
+                    }
+
+                }else{
+
+                    if( User::find()->where(['username' => $this->username])){
+                        return Yii::$app->getSession()->setFlash('error', [
+                            Yii::t('app', "Username already taken, please signup through the site Singup form and use a different username, thanks."),
+                        ]);
+                    } else {
+                        return Yii::$app->getSession()->setFlash('error', [
+                            Yii::t('app', "We were unable to complete the process and sync {source}.", ['source' => $this->source]),
+                        ]);
+                    }
+
+                }
+
+            }
+
+        }else{
+
+            $model = new SignupForm();
+            if ($model->load(Yii::$app->request->post())) {
+                if ($user = $model->signup()) {
+                    if (Yii::$app->getUser()->login($user)) {
+                        MailCall::onMailableAction('signup',$this->getUniqueId());
+                        return $this->goHome();
+                    }
                 }
             }
+
+            return $this->render('signup', [
+                'model' => $model,
+            ]);
+
         }
 
-        return $this->render('signup', [
-            'model' => $model,
-        ]);
     }
 
     /**
@@ -256,7 +313,7 @@ class SiteController extends Controller
 
         $this->source = $client->getId();//获取回调函数的来源
 
-        if ($this->emailPresent()){
+        if (!$this->emailPresent()){
             return Yii::$app->getSession()->setFlash('error', [
                 Yii::t('app', "Unable to finish, {source} did not
                                 provide us with an email. Please check your settings on
@@ -287,7 +344,7 @@ class SiteController extends Controller
 
         }else{ //如果已经登录，执行邮箱匹配
 
-            if(!$existingAuth  &&$this->matchEmail()){
+            if(!$existingAuth  && $this->matchEmail()){
 
                 $auth = $this->createAuth(Yii::$app->user);
 

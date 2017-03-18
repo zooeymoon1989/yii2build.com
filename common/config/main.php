@@ -45,11 +45,11 @@ return [
                     'clientId' => '84253cb21276e732547f',
                     'clientSecret' => 'df589ca7ab301ccab4700a07fff1e935fb9e390d',
                 ],
-//                'twitter' => [
-//                    'class' => 'yii\authclient\clients\Twitter',
-//                    'consumerKey' => 'vpKiLHMdvlGNosVXP4TaDhoXc',
-//                    'consumerSecret' => 'TI6TQcC0UNHU9iiAddH12OJRJrq0ICp37l25yNEqj6bWSYKS7M',
-//                ],
+                'twitter' => [
+                    'class' => 'yii\authclient\clients\Twitter',
+                    'consumerKey' => 'vpKiLHMdvlGNosVXP4TaDhoXc',
+                    'consumerSecret' => 'TI6TQcC0UNHU9iiAddH12OJRJrq0ICp37l25yNEqj6bWSYKS7M',
+                ],
 //                'google' => [
 //                    'class' => 'yii\authclient\clients\GoogleOAuth',
 //                    'clientId' => '108969290916829736875',
